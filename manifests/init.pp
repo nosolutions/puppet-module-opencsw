@@ -5,6 +5,8 @@
 class opencsw (
   $package_source = 'http://get.opencsw.org/now',
   $mirror         = 'http://mirror.opencsw.org/opencsw/stable',
+  $pkgaddopts     = '-G',
+  $wgetopts       = '-nv',
   $use_gpg        = false,
   $use_md5        = false,
 ) {
@@ -36,6 +38,8 @@ class opencsw (
 
   # Template uses:
   #   - $mirror
+  #   - $pkgaddopts
+  #   - $wgetopts
   #   - $use_gpg
   #   - $use_md5
   file { '/etc/opt/csw/pkgutil.conf':
