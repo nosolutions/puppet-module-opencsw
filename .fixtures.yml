@@ -1,0 +1,5 @@
+fixtures:
+  symlinks:
+    "opencsw": "#{source_dir}"
+  repositories:
+    staging: "https://github.com/nanliu/puppet-staging.git"
