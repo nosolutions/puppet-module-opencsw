@@ -15,14 +15,20 @@
 # Mirror to use for downloads
 # See http://www.blastwave.org/mirrors.php for alternative mirrors
 # Default: http://download.blastwave.org/csw/unstable
+<%- if @mirror.kind_of?(Array) -%>
+<%-   @mirror.each do |m| -%>
+mirror=<%=     m %>
+<%-   end -%>
+<%- else -%>
 mirror=<%= @mirror %>
+<%- end -%>
 
 # Solaris 10 only. Comment this line to make pkgadd install packages into all zones instead of
 # Global only.
-pkgaddopts=-G
+pkgaddopts=<%= @pkgaddopts %>
 
 # Flags for use with wget, e.g. "-nv" for less verbose or "-q" for quiet
-wgetopts=-nv
+wgetopts=<%= @wgetopts %>
 
 # To enable use of gpg or md5, uncomment these
 use_gpg=<%= @use_gpg.to_s %>
