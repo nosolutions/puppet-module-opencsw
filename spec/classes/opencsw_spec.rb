@@ -6,6 +6,7 @@ describe 'opencsw', :type => :class do
       { :osfamily => 'Solaris',
         :zonename => 'global',
       }
+    end
     let :params do
       {
         :package_source => 'http://sunkist6.eb.lan.at/osscsw/pkgutil.pkg',
@@ -17,53 +18,46 @@ describe 'opencsw', :type => :class do
       }
     end
 
-    it { should contain_class('staging::file').that_comes_before('Package[CSWpkgutil')}
-    it { should contain_file('/var/sadm/install/admin/opencsw-noask').that_comes_before('Package[CSWpkgutil')}
-
     it do
-    should contain_class('staging::file').with({
+    should contain_define('staging::file[CSWpkgutil.pkg]').that_comes_before('Package[CSWpkgutil]').with({
         'target' => '/var/sadm/pkg/CSWpkgutil.pkg',
         'source' => 'http://sunkist6.eb.lan.at/osscsw/pkgutil.pkg',
-        'before' => 
         })
     end
 
     it do
-    should contain_file('/var/sadm/install/admin/opencsw-noask').with({
-        'ensure' => 'latest',
-        'provider' => 'sun',
-        'source' => '/var/sadm/pkg/CSWpkgutil.pkg',
-        'adminfile' => '/var/sadm/install/admin/opencsw-noask',
+    should contain_file('/var/sadm/install/admin/opencsw-noask').that_comes_before('Package[CSWpkgutil]').with({
+        'ensure' => 'file',
+        'source' => 'puppet:///modules/opencsw/opencsw-noask',
         })
+    end
 
+    # it { should contain_class('staging') }
     it do
     should contain_package('CSWpkgutil').with({
-        'ensure' => 'CSWpkgutil.pkg',
-        'content' => 
+        'ensure'    => 'latest',
+        'provider'  => 'sun',
+        'source'    => '/var/sadm/pkg/CSWpkgutil.pkg',
+        'adminfile' => '/var/sadm/install/admin/opencsw-noask',
         })
-    # it do
-    # should contain_exec('run_script').with({
-    #     'command'   => '/opt/sysdoc_serialnumber_brandedzones.sh',
-    #     'creates'   => '/opt/sysdoc_serialnumber.lock',
+    end
 
-    #  })
-    # end
-    it do 
-    should contain_file("/opt/sysdoc_serialnumber_brandedzones.sh").with({
-        'ensure'    => 'present',
-        'source'    => 'puppet:///modules/oss_operations/sysdoc_serialnumber_brandedzones.sh',
-        'mode'      => '0700',
-        'owner'     => 'root',
-        'group'     => 'root',
+    it do
+    should contain_file('/etc/opt/csw/pkgutil.conf').that_requires('Package[CSWpkgutil]').with({
+        'ensure' => 'symlink',
+        'target' => '/etc/opt/csw/pkgutil.conf', 
         })
     end
-    it do 
-    should contain_file("/opt/sysdoc_serialnumber.lock").with({
-        'ensure'    => 'present',
-        'mode'      => '0700',
-        'owner'     => 'root',
-        'group'     => 'root',
+
+    it do
+    should contain_exec('pkgutil-update').that_requires('File[/etc/opt/csw/pkgutil.conf]').with({
+        'command' => '/opt/csw/bin/pkgutil -U',
+        'creates' => '/var/opt/csw/pkgutil/'
         })
-    end
+
   end
 end
+
+# it { should contain_class('staging::file').that_comes_before('Package[CSWpkgutil')}
+# it { should contain_file('/var/sadm/install/admin/opencsw-noask').that_comes_before('Package[CSWpkgutil')}
+    
