@@ -17,10 +17,14 @@ class opencsw (
     mode  => '0644',
   }
 
-  staging::file { 'CSWpkgutil.pkg':
-    target => '/var/sadm/pkg/CSWpkgutil.pkg',
-    source => $package_source,
-    before => Package['CSWpkgutil'],
+  include 'archive'
+
+  archive { 'CSWpkgutil.pkg':
+    path => '/var/sadm/pkg',
+    creates      => '/var/sadm/pkg/CSWpkgutil.pkg',
+    extract      => false,
+    source       => $package_source,
+    before       => Package['CSWpkgutil'],
   }
 
   file { '/var/sadm/install/admin/opencsw-noask':
