@@ -54,6 +54,9 @@ class opencsw (
     require => Package['CSWpkgutil'],
   }
 
+  # This creates the catalog file, looks like this:
+  # - catalog.sunkist6.eb.lan.at_opencsw_testing_i386_5.10
+  # - catalog.sunkist6.eb.lan.at_osscsw_i386_5.10
   $mangled = regsubst(regsubst($mirror, '(^.*//)', ''), '/', '_', 'G')
   $catalog = "catalog.${mangled}_${::hardwareisa}_${::kernelrelease}"
   exec { 'pkgutil-update':
